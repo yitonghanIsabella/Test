@@ -1,0 +1,27 @@
+img{
+    width:200px; 
+    height:140px;
+    padding-right: 25px;
+}
+
+/* .icon img{
+    width:2px; 
+    height:2px;
+} */
+
+.left{ 
+    float:left; 
+    width:70%;
+    margin-top: -25px; 
+}
+
+.right{ 
+    float:right;
+    margin-top: 5px; 
+}
+
+.content{ 
+    white-space:nowrap; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
+}

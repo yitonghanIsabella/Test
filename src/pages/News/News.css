@@ -1,0 +1,70 @@
+.navbox {
+    display: flex;    
+    position: fixed;   
+    top:0;
+    padding-top:20px;             
+} 
+.tagbox{
+    display: flex;   
+    background: #f1f1f1;
+    width:100%;
+    height:30px;
+    padding:10px;
+    position: fixed;   
+    top:50px;           
+}           
+.footer{
+    display: flex;                
+    justify-content: space-around;
+    width:100%;                
+    font-size: 40px;
+    position: fixed;
+    bottom: 0;
+}
+.blogNav{
+    color:rgb(25, 122, 233);
+    text-decoration:none;
+}
+a:hover {
+    color:rgb(25, 122, 233);
+    text-decoration:none;              
+}
+.navitem {      
+    flex: none;           
+    color:grey;
+    text-decoration:none; 
+    margin-left:30px;
+    margin-bottom:10px;
+    border:none;
+    background-color: white;
+    font-size: 20px;
+}
+.navitem:focus{
+    color:rgb(25, 122, 233);
+}
+.navitem:hover {
+    color:rgb(25, 122, 233);      
+}
+.tag {
+    border:none;
+    border-radius: 25px;
+    background: white;   
+    padding:5px 11px 5px 11px;
+    width:fit-content;
+    height: fit-content;    
+    font-size:17px;    
+    color:grey;
+    text-decoration:none; 
+    margin-left:10px;
+}  
+.selectedTag{
+    background: rgb(25, 122, 233);   
+    color:white !important;
+}
+.tag:focus{
+    background: rgb(25, 122, 233);    
+    color:white !important;
+}       
+.tag:hover {
+    color:rgb(25, 122, 233);      
+}
