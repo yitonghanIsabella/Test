@@ -2,7 +2,9 @@
     display: flex;    
     position: fixed;   
     top:0;
-    padding-top:20px;             
+    padding-top:20px;
+    width:100%;
+    background: white;             
 } 
 .tagbox{
     display: flex;   
@@ -20,14 +22,7 @@
     font-size: 40px;
     position: fixed;
     bottom: 0;
-}
-.blogNav{
-    color:rgb(25, 122, 233);
-    text-decoration:none;
-}
-a:hover {
-    color:rgb(25, 122, 233);
-    text-decoration:none;              
+    background: white;  
 }
 .navitem {      
     flex: none;           
@@ -36,14 +31,10 @@ a:hover {
     margin-left:30px;
     margin-bottom:10px;
     border:none;
-    background-color: white;
     font-size: 20px;
 }
-.navitem:focus{
-    color:rgb(25, 122, 233);
-}
 .navitem:hover {
-    color:rgb(25, 122, 233);      
+    color:rgb(25, 122, 233) !important;     
 }
 .tag {
     border:none;
@@ -56,15 +47,4 @@ a:hover {
     color:grey;
     text-decoration:none; 
     margin-left:10px;
-}  
-.selectedTag{
-    background: rgb(25, 122, 233);   
-    color:white !important;
-}
-.tag:focus{
-    background: rgb(25, 122, 233);    
-    color:white !important;
-}       
-.tag:hover {
-    color:rgb(25, 122, 233);      
-}
+}     

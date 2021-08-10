@@ -1,118 +1,101 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import "./VirtualList.css";
-import NewsItem from "../NewsItem/NewsItem";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; 
 import { getArticles } from '../../fake-api';
+import NewsItem from "../NewsItem/NewsItem";
+import "./VirtualList.css";
 
-const Test = (props) => {
-  /* console.log(props.categoryId); */
-  const itemHeight = 200; //子item高度
-  const [dataSource, setDataSource] = useState([]);
-  const [dataSlice, setDataSlice] = useState([]); //数据切片
-  const [scrollDis, setScrollDis] = useState(0);
-  const [maxScrollDis, setMaxScrollDis] = useState(0);
-  /* const [flag,setFlag]=useState(true); */
-  const [offset,setOffset]=useState(0);
-  const [hasMore,setHasMore]=useState();
-  const [total,setTotal]=useState();
+const VirtualList=(props)=>{
+  const [List, setList] = useState([]);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [noData, setNoData] = useState(false);
+  const [category, setCategory] = useState(0);
+  const [sort, setSort] = useState('hot');
+  const [historyList,setHistoryList]=useState([])
 
-  const refContainer = useRef();
-  const refVirtualContainer = useRef();
-
-  let history = useHistory();
   const click=(id)=>{
-    history.push(`/articles`,{id})
+    let tempList=[]
+    if( (localStorage.getItem(1)).length===1 )
+      tempList=[localStorage.getItem(1)]
+    else if( (localStorage.getItem(1)).length>1 ){
+      tempList=localStorage.getItem(1).split( ',' )
+    }
+    tempList.push(id)
+    setHistoryList(tempList)
   }
 
-  useEffect(
-    () => {
-      getArticles(props.categoryId, props.sortBy, offset, 10).then(res => {                      
-      
-        setDataSource(dataSource.concat(res.data.articles));
+  useEffect(() => {
+    localStorage.setItem(1,historyList)
+  }, [historyList]);
 
-        /* setDataSource(res.data.articles); */
-        setHasMore(res.has_more);
-        setTotal(res.total);
-      })
-    // eslint-disable-next-line  
-    }, [offset]
-  )
-
-  useEffect(
-    () => {
-      //设置虚拟容器高度
-      const containerHeight = itemHeight * total;
-      /* console.log(containerHeight); */
-      refVirtualContainer.current.style.height = containerHeight + "px";
-      //设置可视区域数据
-      let refContainerHeight = refContainer.current.clientHeight;
-
-      if(dataSource.length === 10) {
-        const num = Math.ceil(refContainerHeight / itemHeight);
-        setDataSlice(dataSource.slice(0, num));
-      }
-      /* console.log(maxScrollDis); */
-      refContainer.current.addEventListener("scroll", (e) => {    
-        /* if(flag)
-        {
-          setFlag(false);
-
-          if(e.target.scrollTop>maxScrollDis){
-            if(hasMore){
-              setOffset(offset+10);
-            }
-            setMaxScrollDis(e.target.scrollTop);
-          }
-          setData(e.target.scrollTop, refContainerHeight, containerHeight);
-
-          const timer = setTimeout(()=>{setFlag(true)
-            clearInterval(timer);
-          }, 200);
-          
-        }    */
-        
-        if(e.target.scrollTop>maxScrollDis){
-          if(hasMore){
-            setOffset(offset+10);
-          }
-          setMaxScrollDis(e.target.scrollTop);
-        }
-        setData(e.target.scrollTop, refContainerHeight, containerHeight);
-
-      });
+  useEffect(() => {
+    setCategory(props.categoryId)
+    setSort(props.sortBy)
     // eslint-disable-next-line
-    }, [dataSource,hasMore,total]
-  )
+  }, [props]);
 
-  const setData = (scrollTop, refContainerHeight, containerHeight) => {
-    /* console.log("scrollTop:"+scrollTop+"  containerHeight:"+containerHeight+"  total:"+total); */
-    const beginNum = Math.ceil((scrollTop / containerHeight) * total);
-    const domNum = Math.ceil(refContainerHeight / itemHeight);
-    /* console.log(beginNum); */
-    setDataSlice(dataSource.slice(beginNum, domNum *3 + beginNum));
-    setScrollDis(scrollTop);
-  };
+  window.onscroll = () => {
+    if (window.innerHeight + Math.round(document.documentElement.scrollTop) === document.documentElement.offsetHeight) {
+      if(!noData) {
+        loadList(page);
+      }
+    }
+  }
+
+  useEffect(() => {
+    setList([])
+    setNoData(false)
+    setPage(0)
+    // eslint-disable-next-line
+  }, [category,sort]);
+
+  useEffect(() => {          
+    if(List.length===0 && noData===false && page===0){
+      loadList(page)
+    }
+    // eslint-disable-next-line
+  }, [List,noData,page]);
+
+  const loadList = (page) => {
+        setLoading(true);
+        getArticles(Number(category), sort, page, 10).then
+        (res => {        
+            if(!res.has_more){
+              setNoData(true)
+              return
+            }              
+            const newPage = page + 10;
+            const newList = List.concat(res.data.articles);
+            setList(newList);
+            setPage(newPage);
+            
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+        .finally(() =>{
+        setLoading(false);
+        })
+  }
 
   return (
     <div>
-      <div ref={refContainer} className="container">
-        <div className="virtual-container" ref={refVirtualContainer}>
-          <div
-            className="virtual"
-            style={{ transform: `translateY(${scrollDis}px)` }}
-          >
-            {dataSlice.map((article,id) => ( 
-              <div onClick={()=>click(article.article_id)}
-                key={id}
-                className="item"
-              >
+      <div className="container">
+        {List.map((article, id) => 
+          ( 
+            <Link className="link" target="_blank" to={`/articles/?id=${article.article_id}`} 
+            onClick={()=>click(article.article_id)} key={id}>
+            <div 
+                className="item">
                 <NewsItem article={article} />
-              </div>
-            ))}
-          </div>
-        </div>
+            </div>
+            </Link>
+          )
+        )}
+        {loading ?  <div className="text-center">loading data ...</div> : "" }
+        {noData ? <div className="text-center">no data anymore ...</div> : "" }    
       </div>
     </div>
   );
-};
-export default Test;
+}
+export default VirtualList

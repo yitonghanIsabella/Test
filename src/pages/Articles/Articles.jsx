@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import {withRouter} from 'react-router-dom'
 import "./Articles.css";
 import {getArticleById} from '../../fake-api';
+import Comments from '../../components/Comments/Comments';
+import qs from 'querystring'
 
 class Articles extends Component {
 	constructor(props) {
@@ -9,12 +11,9 @@ class Articles extends Component {
 		this.state = {content: ''};
 	}
 
-	back = ()=>{
-		this.props.history.goBack()
-	}
-
 	componentWillMount(){
-		const {id} = this.props.location.state || {}
+		const {search} = this.props.location
+      	const {id} = qs.parse(search.slice(1))
 		getArticleById(id).then(res => 
 			this.setState({
 				content: res.data.article.article_content
@@ -23,18 +22,16 @@ class Articles extends Component {
 	}
 
 	render() {		
+		const {id} = this.props.location.state || {}
 		return (
 			<div>
-				<button className="backButton" onClick={this.back}>返回</button>
-
 				<div className="detailImgWrap" dangerouslySetInnerHTML={{ __html:this.state.content}}></div>
 
-				{/* <div style={{marginTop:'50px'}} className="list">
-					<VirtualList />         
-				</div> */}
+				<div>
+					<Comments articleId={id}/>         
+				</div>
 			</div>
 		)
 	}
 }
-
 export default withRouter(Articles)
